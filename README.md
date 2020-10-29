@@ -28,6 +28,7 @@ DROPBEAR_EXTRA_ARGS="-p 423 -p 143 -p 109"
 sudo cp -rf dropbear /etc/default/dropbear
 sudo service dropbear stop
 sudo service dropbear start
+# Wohoo, you can login Dropbear port 143 / 423 / 109
 ```
 
 ## How to change certificate signature of STUNNEL (SSH SSL)
