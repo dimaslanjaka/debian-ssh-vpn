@@ -42,7 +42,8 @@ config = parser.parse_args()
 
 client_args = ['%s%s' % (config.bin, 'ss-local'), '-v']
 server_args = ['%s%s' % (config.bin, 'ss-server'), '-v', '-u']
-tunnel_args = ['%s%s' % (config.bin, 'ss-tunnel'), '-v', '-u', '-l1082', '-L%s:53' % config.dns]
+tunnel_args = ['%s%s' % (config.bin, 'ss-tunnel'), '-v',
+               '-u', '-l1082', '-L%s:53' % config.dns]
 
 if config.client_conf:
     client_args.extend(['-c', config.client_conf])
@@ -80,9 +81,9 @@ try:
     time.sleep(2)
 
     p3 = Popen(['curl', config.url, '-v', '-L',
-        '--socks5-hostname', '127.0.0.1:1081',
-        '-m', '15', '--connect-timeout', '10'],
-        stdin=PIPE, stdout=PIPE, stderr=PIPE, close_fds=True)
+                '--socks5-hostname', '127.0.0.1:1081',
+                '-m', '15', '--connect-timeout', '10'],
+               stdin=PIPE, stdout=PIPE, stderr=PIPE, close_fds=True)
     if p3 is not None:
         fdset.append(p3.stdout)
         fdset.append(p3.stderr)
