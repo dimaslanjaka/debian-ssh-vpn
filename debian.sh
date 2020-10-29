@@ -203,17 +203,17 @@ service ssh restart
 service dropbear restart
 
 echo "Copy script to /usr/bin"
-cp menu /usr/bin/
-cp user-add /usr/bin/
-cp trial /usr/bin/
-cp user-del /usr/bin/
-cp user-login /usr/bin/
-cp user-list /usr/bin/
-cp expdel /usr/bin/
-cp resvis /usr/bin/
-cp speedtest /usr/bin/
-cp info /usr/bin/
-cp about /usr/bin/
+cp -rf menu /usr/bin/
+cp -rf user-add /usr/bin/
+cp -rf trial /usr/bin/
+cp -rf user-del /usr/bin/
+cp -rf user-login /usr/bin/
+cp -rf user-list /usr/bin/
+cp -rf expdel /usr/bin/
+cp -rf resvis /usr/bin/
+cp -rf speedtest /usr/bin/
+cp -rf info /usr/bin/
+cp -rf about /usr/bin/
 
 echo "0 0 * * * root /sbin/reboot" >/etc/cron.d/reboot
 # Setting permissions
