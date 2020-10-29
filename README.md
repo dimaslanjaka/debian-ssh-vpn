@@ -13,8 +13,16 @@ netstat -ntulp | grep 443 # check port 443, if output exist, change port SSL (st
 - OpenVPN port 424 - xxxx (any if not used)
 
 ## How to change dropbear port
-- edit ./dropbear
+- edit `nano ./dropbear`
 - change the port
+```text
+# enable dropbear
+NO_START=0
+# default port dropbear
+DROPBEAR_PORT=423
+# multi port aliases
+DROPBEAR_EXTRA_ARGS="-p 423 -p 143 -p 109"
+```
 - replace config dropbear and restart dropbear
 ```bash
 sudo cp -rf dropbear /etc/default/dropbear
