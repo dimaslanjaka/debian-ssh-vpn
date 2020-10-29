@@ -11,6 +11,7 @@ netstat -ntulp | grep 443 # check port 443, if output exist, change port SSL (st
 ## default settings
 - Dropbear port 423
 - OpenVPN port 424 - xxxx (any if not used)
+- STUNNEL (SSH SSL) port 443
 
 ## How to change dropbear port
 - edit `nano ./dropbear`
@@ -40,5 +41,17 @@ openssl genrsa -out key.pem 2048
 openssl req -new -x509 -key key.pem -out cert.pem -days 1095
 # insert your own signature
 cat key.pem cert.pem >>/etc/stunnel/stunnel.pem
+/etc/init.d/stunnel4 restart
+```
+
+## How to change port STUNNEL
+- edit `nano ./stunnel.conf`
+```text
+accept = 443
+```
+- change with your desired port
+- replace existing configuration and restart stunnel
+```bash
+cp -rf stunnel.conf /etc/stunnel/stunnel.conf
 /etc/init.d/stunnel4 restart
 ```
