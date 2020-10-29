@@ -4,6 +4,9 @@ if ! [ -x "$(command -v curl)" ]; then
 fi
 IP=$(curl icanhazip.com)
 
+sudo apt update && apt upgrade -y
+sudo apt install -y snapd
+sudo apt install -y haveged
 sudo apt-get install software-properties-common -y
 sudo apt-get update -y
 sudo add-apt-repository "deb http://ftp.debian.org/debian stretch-backports main"
