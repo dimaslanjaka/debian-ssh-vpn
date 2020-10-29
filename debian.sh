@@ -1,15 +1,15 @@
 #!/bin/bash
 # initialize variable
 export DEBIAN_FRONTEND=noninteractive
-OS=`uname -m`;
-MYIP=$(wget -qO- ipv4.icanhazip.com);
-MYIP2="s/xxxxxxxxx/$MYIP/g";
+OS=$(uname -m)
+MYIP=$(wget -qO- ipv4.icanhazip.com)
+MYIP2="s/xxxxxxxxx/$MYIP/g"
 
 # go to root
 cd ~
 
 # disable ipv6
-echo 1 > /proc/sys/net/ipv6/conf/all/disable_ipv6
+echo 1 >/proc/sys/net/ipv6/conf/all/disable_ipv6
 sed -i '$ i\echo 1 > /proc/sys/net/ipv6/conf/all/disable_ipv6' /etc/rc.local
 
 # install wget and curl
@@ -30,7 +30,8 @@ deb http://packages.dotdeb.org wheezy all
 deb http://download.webmin.com/download/repository sarge contrib
 deb http://webmin.mirror.somersettechsolutions.co.uk/repository sarge contrib
 wget "http://www.dotdeb.org/dotdeb.gpg"
-cat dotdeb.gpg | apt-key add -;rm dotdeb.gpg
+cat dotdeb.gpg | apt-key add -
+rm dotdeb.gpg
 sh -c 'echo "deb http://download.webmin.com/download/repository sarge contrib" > /etc/apt/sources.list.d/webmin.list'
 wget -qO - http://www.webmin.com/jcameron-key.asc | apt-key add -
 
@@ -45,26 +46,20 @@ apt-get -y install nano iptables dnsutils openvpn screen whois ngrep unzip unrar
 
 # install neofetch
 echo "deb http://dl.bintray.com/dawidd6/neofetch jessie main" | tee -a /etc/apt/sources.list
-curl "https://bintray.com/user/downloadSubjectPublicKey?username=bintray"| apt-key add -
+curl "https://bintray.com/user/downloadSubjectPublicKey?username=bintray" | apt-key add -
 apt-get update
-apt-get install neofetch
-
-echo "deb http://dl.bintray.com/dawidd6/neofetch jessie main" | tee -a /etc/apt/sources.list
-curl "https://bintray.com/user/downloadSubjectPublicKey?username=bintray"| apt-key add -
-apt-get update
-apt-get install neofetch
-echo "clear" >> .bash_profile
-echo "neofetch" >> .bash_profile
+apt-get install neofetch -y
 
 echo "install webserver"
 cd ~
+mkdir /etc/nginx
 rm /etc/nginx/sites-enabled/default
 rm /etc/nginx/sites-available/default
 echo "installing nginx.conf to /etc/nginx/"
 cp nginx.conf /etc/nginx/
 echo "creating index"
 mkdir -p /home/vps/public_html
-echo "INDEX" > /home/vps/public_html/index.html
+echo "INDEX" >/home/vps/public_html/index.html
 echo "installing vps.conf to /etc/nginx/conf.d/"
 cp vps.conf /etc/nginx/conf.d/
 service nginx restart
@@ -83,10 +78,12 @@ service openvpn restart
 sysctl -w net.ipv4.ip_forward=1
 sed -i 's/#net.ipv4.ip_forward=1/net.ipv4.ip_forward=1/g' /etc/sysctl.conf
 iptables -t nat -I POSTROUTING -s 192.168.100.0/24 -o eth0 -j MASQUERADE
-iptables-save > /etc/iptables_set.conf
+iptables-save >/etc/iptables_set.conf
 
 echo "install iptables to /etc/network/if-up.d/"
 cd ~
+mkdir /etc/network
+mkdir /etc/network/if-up.d
 cp iptables /etc/network/if-up.d/
 chmod +x /etc/network/if-up.d/iptables
 service openvpn restart
@@ -94,9 +91,10 @@ service openvpn restart
 echo "Configuring openvpn"
 cd ~
 echo "install client.ovpn to /etc/openvpn/"
+mkdir /etc/openvpn
 cp client.ovpn /etc/openvpn/
 cd /etc/openvpn/
-sed -i $MYIP2 /etc/openvpn/client.ovpn;
+sed -i $MYIP2 /etc/openvpn/client.ovpn
 cp client.ovpn /home/vps/public_html/
 
 # install badvpn
@@ -122,15 +120,15 @@ apt-get -y install dropbear
 sed -i 's/NO_START=1/NO_START=0/g' /etc/default/dropbear
 sed -i 's/DROPBEAR_PORT=22/DROPBEAR_PORT=444/g' /etc/default/dropbear
 sed -i 's/DROPBEAR_EXTRA_ARGS=/DROPBEAR_EXTRA_ARGS="-p 444 -p 80"/g' /etc/default/dropbear
-echo "/bin/false" >> /etc/shells
-echo "/usr/sbin/nologin" >> /etc/shells
+echo "/bin/false" >>/etc/shells
+echo "/usr/sbin/nologin" >>/etc/shells
 service ssh restart
 service dropbear restart
 
 cd ~
 echo "install dropbear 2017"
-apt-get install zlib1g-dev
-bzip2 -cd dropbear-2017.75.tar.bz2  | tar xvf -
+apt-get install zlib1g-dev -y
+bzip2 -cd dropbear-2017.75.tar.bz2 | tar xvf -
 cd dropbear-2017.75
 ./configure
 make && make install
@@ -140,6 +138,7 @@ service dropbear restart
 rm -f /root/dropbear-2017.75.tar.bz2
 
 cd ~
+mkdir /etc/stunnel
 echo "install stunnel4"
 apt-get -y install stunnel4
 echo "install stunnel.pem to /etc/stunnel/"
@@ -151,21 +150,22 @@ sed -i 's/ENABLED=0/ENABLED=1/g' /etc/default/stunnel4
 service stunnel4 restart
 
 # install fail2ban
-apt-get -y install fail2ban;
+apt-get -y install fail2ban
 service fail2ban restart
 
 # install squid3
 cd ~
 apt-get -y install squid3
 # install squid.conf to /etc/squid3/
+mkdir /etc/squid3
 cp squid.conf /etc/squid3/
-sed -i $MYIP2 /etc/squid3/squid.conf;
+sed -i $MYIP2 /etc/squid3/squid.conf
 service squid3 restart
 
 # install webmin
 cd ~
-dpkg --install webmin_1.850_all.deb;
-apt-get -y -f install;
+dpkg --install webmin_1.850_all.deb
+apt-get -y -f install
 rm /root/webmin_1.850_all.deb
 sed -i 's/ssl=1/ssl=0/g' /etc/webmin/miniserv.conf
 service webmin restart
@@ -215,7 +215,7 @@ cp speedtest /usr/bin/
 cp info /usr/bin/
 cp about /usr/bin/
 
-echo "0 0 * * * root /sbin/reboot" > /etc/cron.d/reboot
+echo "0 0 * * * root /sbin/reboot" >/etc/cron.d/reboot
 # Setting permissions
 cd /usr/bin/
 chmod +x menu
@@ -243,57 +243,57 @@ service squid3 restart
 service fail2ban restart
 service webmin restart
 rm -rf ~/.bash_history && history -c
-echo "unset HISTFILE" >> /etc/profile
+echo "unset HISTFILE" >>/etc/profile
 clear
 
 # info
 echo "Autoscript Include:" | tee log-install.txt
 echo "===========================================" | tee -a log-install.txt
-echo ""  | tee -a log-install.txt
-echo "Service"  | tee -a log-install.txt
-echo "-------"  | tee -a log-install.txt
-echo "OpenSSH  : 22, 143"  | tee -a log-install.txt
-echo "Dropbear : 80, 444"  | tee -a log-install.txt
-echo "SSL      : 443"  | tee -a log-install.txt
-echo "Squid3   : 8080, 3128 (limit to IP SSH)"  | tee -a log-install.txt
-echo "OpenVPN  : TCP 1194 (client config : http://$MYIP:81/client.ovpn)"  | tee -a log-install.txt
-echo "badvpn   : badvpn-udpgw port 7300"  | tee -a log-install.txt
-echo "nginx    : 81"  | tee -a log-install.txt
-echo ""  | tee -a log-install.txt
-echo "Script"  | tee -a log-install.txt
-echo "------"  | tee -a log-install.txt
-echo "menu         (Show available commands)"  | tee -a log-install.txt
-echo "user-add     (Create Account SSH)"  | tee -a log-install.txt
-echo "trial        (Create Account Trial)"  | tee -a log-install.txt
-echo "user-del     (Delete Account SSH)"  | tee -a log-install.txt
-echo "user-login   (Check User Login)"  | tee -a log-install.txt
-echo "user-list    (Check Member SSH)"  | tee -a log-install.txt
-echo "expdel       (Delete User expired)"  | tee -a log-install.txt
-echo "resvis       (Restart Service Dropbear, Webmin, Squid3, OpenVPN dan SSH)"  | tee -a log-install.txt
-echo "reboot       (Reboot VPS)"  | tee -a log-install.txt
-echo "speedtest    (Speedtest VPS)"  | tee -a log-install.txt
-echo "info         (INFO System)"  | tee -a log-install.txt
-echo ""  | tee -a log-install.txt
-echo "Other features"  | tee -a log-install.txt
-echo "----------"  | tee -a log-install.txt
-echo "Webmin   : http://$MYIP:10000/"  | tee -a log-install.txt
-echo "Timezone : Asia/Jakarta (GMT +7)"  | tee -a log-install.txt
-echo "IPv6     : [off]"  | tee -a log-install.txt
-echo ""  | tee -a log-install.txt
-echo "Thanks To"  | tee -a log-install.txt
-echo "---------"  | tee -a log-install.txt
-echo "Allah"  | tee -a log-install.txt
-echo "L3n4r0x"  | tee -a log-install.txt
-echo "Admin And All Member KPN Family"  | tee -a log-install.txt
-echo "Google"  | tee -a log-install.txt
-echo ""  | tee -a log-install.txt
-echo "Group"  | tee -a log-install.txt
-echo "----"  | tee -a log-install.txt
-echo "Dark-IT"  | tee -a log-install.txt
-echo ""  | tee -a log-install.txt
-echo "VPS AUTO REBOOT EVERY MIDNIGHT"  | tee -a log-install.txt
-echo "Log Installation --> /root/log-install.txt"  | tee -a log-install.txt
-echo ""  | tee -a log-install.txt
-echo "==========================================="  | tee -a log-install.txt
+echo "" | tee -a log-install.txt
+echo "Service" | tee -a log-install.txt
+echo "-------" | tee -a log-install.txt
+echo "OpenSSH  : 22, 143" | tee -a log-install.txt
+echo "Dropbear : 80, 444" | tee -a log-install.txt
+echo "SSL      : 443" | tee -a log-install.txt
+echo "Squid3   : 8080, 3128 (limit to IP SSH)" | tee -a log-install.txt
+echo "OpenVPN  : TCP 1194 (client config : http://$MYIP:81/client.ovpn)" | tee -a log-install.txt
+echo "badvpn   : badvpn-udpgw port 7300" | tee -a log-install.txt
+echo "nginx    : 81" | tee -a log-install.txt
+echo "" | tee -a log-install.txt
+echo "Script" | tee -a log-install.txt
+echo "------" | tee -a log-install.txt
+echo "menu         (Show available commands)" | tee -a log-install.txt
+echo "user-add     (Create Account SSH)" | tee -a log-install.txt
+echo "trial        (Create Account Trial)" | tee -a log-install.txt
+echo "user-del     (Delete Account SSH)" | tee -a log-install.txt
+echo "user-login   (Check User Login)" | tee -a log-install.txt
+echo "user-list    (Check Member SSH)" | tee -a log-install.txt
+echo "expdel       (Delete User expired)" | tee -a log-install.txt
+echo "resvis       (Restart Service Dropbear, Webmin, Squid3, OpenVPN dan SSH)" | tee -a log-install.txt
+echo "reboot       (Reboot VPS)" | tee -a log-install.txt
+echo "speedtest    (Speedtest VPS)" | tee -a log-install.txt
+echo "info         (INFO System)" | tee -a log-install.txt
+echo "" | tee -a log-install.txt
+echo "Other features" | tee -a log-install.txt
+echo "----------" | tee -a log-install.txt
+echo "Webmin   : http://$MYIP:10000/" | tee -a log-install.txt
+echo "Timezone : Asia/Jakarta (GMT +7)" | tee -a log-install.txt
+echo "IPv6     : [off]" | tee -a log-install.txt
+echo "" | tee -a log-install.txt
+echo "Thanks To" | tee -a log-install.txt
+echo "---------" | tee -a log-install.txt
+echo "Allah" | tee -a log-install.txt
+echo "L3n4r0x" | tee -a log-install.txt
+echo "Admin And All Member KPN Family" | tee -a log-install.txt
+echo "Google" | tee -a log-install.txt
+echo "" | tee -a log-install.txt
+echo "Group" | tee -a log-install.txt
+echo "----" | tee -a log-install.txt
+echo "Dark-IT" | tee -a log-install.txt
+echo "" | tee -a log-install.txt
+echo "VPS AUTO REBOOT EVERY MIDNIGHT" | tee -a log-install.txt
+echo "Log Installation --> /root/log-install.txt" | tee -a log-install.txt
+echo "" | tee -a log-install.txt
+echo "===========================================" | tee -a log-install.txt
 cd
 rm -f /root/debian.sh
