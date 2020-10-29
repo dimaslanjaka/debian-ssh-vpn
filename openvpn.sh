@@ -15,6 +15,6 @@ sudo ufw allow 80
 sudo ufw allow 443
 sudo ufw enable
 # sudo ufw status
-wget -q https://git.io/vpn -O openvpn-install.sh
-sudo bash openvpn-install.sh
+wget -q https://git.io/vpn -O openvpn.sh
+sudo bash openvpn.sh
 # udp, ip vps, 1194, windows-vpn-client
