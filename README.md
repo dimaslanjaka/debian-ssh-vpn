@@ -5,5 +5,5 @@ Debian SSH OPENVPN Auto Installer
 sudo su
 # insert root password
 # run script
-sh install.sh
+netstat -ntulp | grep 443 # check port 443, if output exist, change port SSL (stunnel.conf) to other port
 ```
