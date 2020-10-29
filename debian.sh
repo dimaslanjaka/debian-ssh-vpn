@@ -24,11 +24,13 @@ sed -i 's/AcceptEnv/#AcceptEnv/g' /etc/ssh/sshd_config
 service ssh restart
 
 # set repo
-deb http://cdn.debian.net/debian wheezy main contrib non-free
-deb http://security.debian.org/ wheezy/updates main contrib non-free
-deb http://packages.dotdeb.org wheezy all
-deb http://download.webmin.com/download/repository sarge contrib
-deb http://webmin.mirror.somersettechsolutions.co.uk/repository sarge contrib
+sudo apt-get install software-properties-common -y
+sudo apt-get update -y
+sudo add-apt-repository "deb http://cdn.debian.net/debian wheezy main contrib non-free"
+sudo add-apt-repository "deb http://security.debian.org/ wheezy/updates main contrib non-free"
+sudo add-apt-repository "deb http://packages.dotdeb.org wheezy all"
+sudo add-apt-repository "deb http://download.webmin.com/download/repository sarge contrib"
+sudo add-apt-repository "deb http://webmin.mirror.somersettechsolutions.co.uk/repository sarge contrib"
 wget "http://www.dotdeb.org/dotdeb.gpg"
 cat dotdeb.gpg | apt-key add -
 rm dotdeb.gpg
