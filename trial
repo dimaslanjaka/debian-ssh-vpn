@@ -1,6 +1,8 @@
 #!/bin/bash
 
-IP=$(dig +short myip.opendns.com @resolver1.opendns.com)
+MYIP=$(wget -qO- ipv4.icanhazip.com)
+IPV4=$(dig -4 TXT +short o-o.myaddr.l.google.com @ns1.google.com)
+IP=$(dig +short https://diagnostic.opendns.com/myip)
 
 Login=trial$(tr </dev/urandom -dc X-Z0-9 | head -c4)
 hari="1"
@@ -10,12 +12,12 @@ useradd -e $(date -d "$hari days" +"%Y-%m-%d") -s /bin/false -M $Login
 echo -e "$Pass\n$Pass\n" | passwd $Login &>/dev/null
 echo -e ""
 echo -e "====Trial SSH Account===="
-echo -e "Host: $IP"
+echo -e "Host: $MYIP"
 echo -e "Port OpenSSH   : 22,143"
 echo -e "Port Dropbear  : 80,444"
 echo -e "Port SSL/TLS   : 443"
 echo -e "Port Squid     : 8080,3128"
-echo -e "Config OpenVPN (TCP 1194): http://$IP:81/client.ovpn"
+echo -e "Config OpenVPN (TCP 1194): http://$MYIP:81/client.ovpn"
 echo -e "Username: $Login"
 echo -e "Password: $Pass\n"
 echo -e "========================="
