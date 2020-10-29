@@ -6,9 +6,10 @@
   ],
   "mode": "tcp_and_udp",
   "server_port": 8888,
+  "local_address": "127.0.0.1",
   "local_port": 1080,
   "password": "PASS",
   "timeout": 60,
-  "method": "aes-256-gcm",
+  "method": "aes-256-cfb",
   "nameserver": "8.8.8.8"
 }
