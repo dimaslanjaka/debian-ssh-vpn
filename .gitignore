@@ -5,6 +5,7 @@ bin-release/
 [Oo]bj/ # FlashDevelop obj
 [Bb]in/ # FlashDevelop bin
 .backup/
+*_files/
 
 # Other files and folders
 .settings/
