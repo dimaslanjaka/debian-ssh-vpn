@@ -1,5 +1,0 @@
-#!/bin/bash
-sudo find /var/log/ -type f -exec grep -l 'ss-server' {} \; -print
-sudo find /var/log/ -type f -exec grep -n -i -H --color=always 'obfs-server' {} \; -print
-
-#journalctl -f -u shadowsocks-libev.service
